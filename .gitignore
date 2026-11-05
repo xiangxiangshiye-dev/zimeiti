@@ -1,0 +1,12 @@
+*.bak*
+*.before-*
+*.backup*
+*.old
+fix_export.py
+.gradle/
+build/
+local.properties
+.idea/
+
+# Local project backups
+backup/

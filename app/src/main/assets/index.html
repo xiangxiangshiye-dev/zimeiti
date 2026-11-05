@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#172033">
+<title>湘湘视野创作助手</title>
+<style>
+:root{
+--bg:#f4f5f8;--ink:#20283a;--muted:#788195;
+--gold:#c69b55;--dark:#172033;--line:#e8eaf0;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+font:15px system-ui,"Noto Sans SC",sans-serif;padding-bottom:75px}
+header{background:linear-gradient(135deg,#172033,#35415a);
+color:white;padding:23px 18px 20px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:46px;height:46px;border:1px solid #d6b475;
+border-radius:50%;display:grid;place-items:center;color:#e5c48b;font-size:26px}
+h1{font-size:22px;margin:0}
+header p{font-size:12px;color:#d8dce6;margin:5px 0 0}
+main{max-width:760px;margin:auto;padding:14px}
+.panel{background:white;border-radius:15px;padding:15px;margin-bottom:13px;
+box-shadow:0 3px 15px #18233b0a}
+h2{font-size:17px;margin:0 0 13px}
+.muted,.hint{font-size:12px;color:var(--muted);line-height:1.7}
+.hero{background:linear-gradient(120deg,#293750,#172033);
+color:white;border-radius:15px;padding:22px 17px;margin-bottom:14px}
+.hero h2{font-size:21px;color:#e8c98f;margin:0 0 9px}
+.hero p{font-size:12px;color:#e1e5ec;line-height:1.8;margin:0}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.modules{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.module{border:1px solid var(--line);background:#fff;border-radius:13px;
+padding:14px 5px;text-align:center;min-width:0}
+.module:active{background:#f8f3e9}
+.module .ico{font-size:25px;margin-bottom:7px}
+.module strong{display:block;font-size:12px}
+.module small{display:block;font-size:10px;color:var(--muted);margin-top:4px}
+.metric{background:#f5f6f9;border-radius:11px;padding:12px}
+.metric small{display:block;color:var(--muted);font-size:11px}
+.metric strong{font-size:21px;display:block;margin-top:5px}
+input,select,textarea{width:100%;border:1px solid #dfe2e9;
+border-radius:10px;padding:12px;background:white;font:inherit;color:var(--ink)}
+textarea{min-height:180px;resize:vertical;line-height:1.7}
+label{display:block;font-size:13px;margin:12px 0 6px;color:#596276}
+button{font:inherit;cursor:pointer}
+.primary,.secondary,.danger{border:0;border-radius:10px;padding:12px 14px}
+.primary{background:var(--dark);color:white}
+.secondary{background:#f0f1f5;color:#30394c}
+.danger{background:#fff0f0;color:#c33}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.actions button{flex:1;min-width:85px}
+.page{display:none}.page.active{display:block}
+.entry{padding:12px 0;border-bottom:1px solid var(--line)}
+.entry:last-child{border:0}
+.entry strong{font-size:14px}
+.entry small{display:block;color:var(--muted);margin-top:5px}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:white;
+border-top:1px solid var(--line);display:flex;justify-content:space-around;
+padding:9px 2px calc(9px + env(safe-area-inset-bottom));z-index:9}
+.bottom button{border:0;background:none;color:#798194;font-size:11px}
+.bottom button span{display:block;font-size:20px;margin-bottom:3px}
+.bottom button.active{color:#ad813f;font-weight:bold}
+.hidden{display:none!important}
+.poster{background:#202e45;color:white;border-radius:12px;padding:25px;
+min-height:220px;display:flex;flex-direction:column;justify-content:center;
+text-align:center;overflow-wrap:anywhere}
+.poster h2{font-size:25px;color:#e9c78c;line-height:1.5}
+.poster p{font-size:13px;color:#eee;line-height:1.7}
+a.download{display:block;text-align:center;text-decoration:none;
+background:#f0f1f5;padding:12px;border-radius:10px;color:#29364c;margin-top:10px}
+@media(min-width:600px){.modules{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand">
+  <div class="logo">湘</div>
+  <div>
+   <h1>湘湘视野</h1>
+   <p>AI 全媒体创作助手 · 行走，发现热爱生活。</p>
+  </div>
+ </div>
+</header>
+<main>
+
+<section id="home" class="page active">
+ <div class="hero">
+  <h2>让每一个灵感，都成为作品。</h2>
+  <p>记录城市、讲述人物、发现生活。<br>
+  用文字和镜头，表达真实世界。</p>
+ </div>
+ <div class="panel">
+  <h2>创作数据</h2>
+  <div class="grid">
+   <div class="metric"><small>我的作品</small><strong id="totalWorks">0</strong></div>
+   <div class="metric"><small>发布计划</small><strong id="totalPlans">0</strong></div>
+  </div>
+ </div>
+ <div class="panel">
+  <h2>创作工具</h2>
+  <div class="modules">
+   <button class="module" onclick="openEditor('article')"><div class="ico">✍️</div><strong>文章创作</strong><small>公众号·人物志</small></button>
+   <button class="module" onclick="openEditor('video')"><div class="ico">🎬</div><strong>视频创作</strong><small>脚本·分镜·旁白</small></button>
+   <button class="module" onclick="showPage('posterPage')"><div class="ico">🖼️</div><strong>图片制作</strong><small>封面·海报</small></button>
+   <button class="module" onclick="openEditor('music')"><div class="ico">🎵</div><strong>音乐创作</strong><small>歌词·音乐提示</small></button>
+   <button class="module" onclick="openEditor('hotspot')"><div class="ico">🔥</div><strong>热点选题</strong><small>话题·策划</small></button>
+   <button class="module" onclick="showPage('works')"><div class="ico">📚</div><strong>作品管理</strong><small>本地作品库</small></button>
+   <button class="module" onclick="showPage('plans')"><div class="ico">📅</div><strong>发布计划</strong><small>内容日历</small></button>
+   <button class="module" onclick="showPage('stats')"><div class="ico">📊</div><strong>数据统计</strong><small>创作数量</small></button>
+   <button class="module" onclick="showPage('settings')"><div class="ico">⚙️</div><strong>品牌设置</strong><small>创作资料</small></button>
+  </div>
+ </div>
+ <div class="panel">
+  <h2>创作理念</h2>
+  <p class="hint">用真实的镜头记录衡阳，用有温度的文字讲述故事。拒绝千篇一律，寻找值得记录的人和事。</p>
+ </div>
+</section>
+
+<section id="editor" class="page">
+ <div class="panel">
+  <h2 id="editorHeading">文章创作</h2>
+  <label>作品标题</label>
+  <input id="workTitle" placeholder="请输入标题">
+  <label>创作类型</label>
+  <select id="workType">
+   <option value="公众号文章">公众号文章</option>
+   <option value="人物志">人物志</option>
+   <option value="社会观察">社会观察</option>
+   <option value="短视频脚本">短视频脚本</option>
+   <option value="视频旁白">视频旁白</option>
+   <option value="歌曲歌词">歌曲歌词</option>
+   <option value="热点策划">热点策划</option>
+  </select>
+  <label>创作内容</label>
+  <textarea id="workContent" placeholder="在这里写下你的灵感、文章、脚本或歌词……"></textarea>
+  <div class="actions">
+   <button class="primary" onclick="saveWork()">保存作品</button>
+   <button class="secondary" onclick="copyWork()">复制内容</button>
+   <button class="secondary" onclick="downloadWork()">导出TXT</button>
+  </div>
+  <p class="hint">作品保存在当前手机本地。请定期导出备份。</p>
+ </div>
+ <div class="panel">
+  <h2>创作提示</h2>
+  <div id="writingTips" class="hint">写下真实的观察，找到文章最值得表达的核心观点。</div>
+ </div>
+</section>
+
+<section id="posterPage" class="page">
+ <div class="panel">
+  <h2>封面海报制作</h2>
+  <label>封面主标题</label>
+  <input id="posterTitle" value="重新发现衡阳">
+  <label>封面副标题</label>
+  <input id="posterSub" value="湘湘视野 · 行走，发现热爱生活">
+  <label>封面背景颜色</label>
+  <input id="posterColor" type="color" value="#202e45">
+  <label>封面比例</label>
+  <select id="posterRatio">
+   <option value="2.35">公众号封面 2.35:1</option>
+   <option value="1">正方形 1:1</option>
+   <option value="0.5625">短视频封面 9:16</option>
+  </select>
+  <div id="posterPreview" class="poster">
+   <h2 id="posterPreviewTitle">重新发现衡阳</h2>
+   <p id="posterPreviewSub">湘湘视野 · 行走，发现热爱生活</p>
+  </div>
+  <div class="actions">
+   <button class="primary" onclick="makePoster()">生成封面图片</button>
+  </div>
+  <div id="posterDownload"></div>
+ </div>
+</section>
+
+<section id="works" class="page">
+ <div class="panel">
+  <h2>我的作品库</h2>
+  <input id="workSearch" placeholder="搜索标题、正文或创作类型" oninput="renderWorks()">
+  <div id="workList"></div>
+  <div class="actions">
+   <button class="secondary" onclick="exportBackup()">导出全部备份</button>
+   <button class="secondary" onclick="document.getElementById('backupFile').click()">恢复备份</button>
+  </div>
+  <input type="file" id="backupFile" accept=".json,application/json" class="hidden" onchange="importBackup(event)">
+ </div>
+</section>
+
+<section id="plans" class="page">
+ <div class="panel">
+  <h2>发布计划</h2>
+  <label>发布平台</label>
+  <select id="planPlatform">
+   <option>微信公众号</option><option>抖音</option><option>微信视频号</option>
+  </select>
+  <label>计划日期</label><input type="date" id="planDate">
+  <label>作品名称</label><input id="planTitle" placeholder="准备发布的作品">
+  <label>备注</label><textarea id="planNote" placeholder="发布说明、素材准备情况" style="min-height:80px"></textarea>
+  <button class="primary" style="width:100%;margin-top:13px" onclick="savePlan()">保存发布计划</button>
+ </div>
+ <div class="panel"><h2>计划列表</h2><div id="planList"></div></div>
+</section>
+
+<section id="stats" class="page">
+ <div class="panel">
+  <h2>创作统计</h2>
+  <div class="grid">
+   <div class="metric"><small>作品总数</small><strong id="statWorks">0</strong></div>
+   <div class="metric"><small>文章作品</small><strong id="statArticles">0</strong></div>
+   <div class="metric"><small>视频作品</small><strong id="statVideos">0</strong></div>
+   <div class="metric"><small>音乐作品</small><strong id="statMusic">0</strong></div>
+  </div>
+  <p class="hint">本版本统计本软件记录的创作数量，不代表平台实际阅读量、播放量或粉丝数据。后续可以增加手动记录。</p>
+ </div>
+</section>
+
+<section id="settings" class="page">
+ <div class="panel">
+  <h2>品牌资料</h2>
+  <label>品牌名称</label><input id="brandName" value="湘湘视野">
+  <label>品牌签名</label><input id="brandSlogan" value="行走，发现热爱生活。">
+  <label>主要创作方向</label>
+  <textarea id="brandDirection" style="min-height:100px">衡阳城市风光、手机街拍、人文历史、人物故事、社会观察。</textarea>
+  <button class="primary" style="width:100%;margin-top:13px" onclick="saveBrand()">保存品牌资料</button>
+ </div>
+ <div class="panel">
+  <h2>数据说明</h2>
+  <p class="hint">本软件第一版采用本地存储，不需要注册账号。卸载应用、清理应用数据可能造成记录丢失，请定期导出备份。</p>
+  <button class="danger" onclick="clearData()">清空全部本地数据</button>
+ </div>
+</section>
+
+</main>
+
+<nav class="bottom">
+ <button class="active" data-page="home" onclick="showPage('home')"><span>⌂</span>首页</button>
+ <button data-page="editor" onclick="openEditor('article')"><span>✎</span>创作</button>
+ <button data-page="posterPage" onclick="showPage('posterPage')"><span>▧</span>图片</button>
+ <button data-page="works" onclick="showPage('works')"><span>▤</span>作品</button>
+ <button data-page="settings" onclick="showPage('settings')"><span>⚙</span>设置</button>
+</nav>
+
+<script>
+const $=id=>document.getElementById(id);
+const getData=(key,def=[])=>{
+ try{return JSON.parse(localStorage.getItem(key))??def}catch(e){return def}
+};
+const putData=(key,val)=>localStorage.setItem(key,JSON.stringify(val));
+let works=getData('xx_works');
+let plans=getData('xx_plans');
+let currentType='article';
+const types={
+ article:['文章创作','公众号文章','写作时注意事实准确、逻辑清楚、表达有温度。'],
+ video:['视频创作','短视频脚本','建议采用开头吸引、主体讲述、结尾互动的结构。'],
+ music:['音乐创作','歌曲歌词','明确主题、情绪、段落结构和适合的演唱风格。'],
+ hotspot:['热点选题','热点策划','先核实事实，再分析背景，避免未经证实的信息。']
+};
+function showPage(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ $(id).classList.add('active');
+ document.querySelectorAll('.bottom button').forEach(b=>{
+ b.classList.toggle('active',b.dataset.page===id);
+ });
+ if(id==='works')renderWorks();
+ if(id==='plans')renderPlans();
+ if(id==='stats')renderStats();
+}
+function openEditor(type){
+ currentType=type;
+ const t=types[type]||types.article;
+ $('editorHeading').textContent=t[0];
+ $('workType').value=t[1];
+ $('writingTips').textContent=t[2];
+ $('workTitle').value='';
+ $('workContent').value='';
+ window.editingWorkId='';
+ showPage('editor');
+}
+function saveWork(){
+ const title=$('workTitle').value.trim();
+ const content=$('workContent').value.trim();
+ if(!title||!content){alert('请填写作品标题和创作内容');return}
+ const id=window.editingWorkId;
+ const old=works.find(w=>w.id===id);
+ if(old){
+  old.title=title;
+  old.content=content;
+  old.type=$('workType').value;
+  old.updated=new Date().toISOString();
+ }else{
+  works.unshift({
+   id:String(Date.now()),
+   title,
+   content,
+   type:$('workType').value,
+   date:new Date().toLocaleString()
+  });
+ }
+ putData('xx_works',works);
+ window.editingWorkId='';
+ alert('作品保存成功');
+ showPage('works');
+ refresh();
+}
+function copyWork(){
+ const text=$('workTitle').value+'\n\n'+$('workContent').value;
+ if(!text.trim()){alert('没有可复制的内容');return}
+ if(navigator.clipboard&&navigator.clipboard.writeText){
+ navigator.clipboard.writeText(text).then(()=>alert('已复制')).catch(()=>fallbackCopy(text));
+ }else fallbackCopy(text);
+}
+function fallbackCopy(text){
+ const area=document.createElement('textarea');area.value=text;
+ document.body.appendChild(area);area.select();
+ try{document.execCommand('copy');alert('已复制')}catch(e){alert('复制失败，请手动选择文字')}
+ area.remove();
+}
+function saveTextFile(fileName,text,mimeType){
+ if(window.AndroidApp && typeof AndroidApp.saveFile==='function'){
+  try{
+   const bytes=new TextEncoder().encode(text);
+   let binary='';
+   for(let i=0;i<bytes.length;i+=8192){
+    binary+=String.fromCharCode(...bytes.subarray(i,i+8192));
+   }
+   AndroidApp.saveFile(fileName,mimeType,btoa(binary));
+   return;
+  }catch(e){
+   alert('安卓保存失败：'+e.message);
+   return;
+  }
+ }
+ const blob=new Blob([text],{type:mimeType});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement('a');
+ a.href=url;a.download=fileName;a.click();
+ setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+function downloadText(name,text){
+ saveTextFile(name+'.txt',text,'text/plain;charset=utf-8');
+}
+function downloadWork(){
+ const title=$('workTitle').value.trim()||'湘湘视野作品';
+ downloadText(title,title+'\n\n'+$('workContent').value);
+}
+function renderWorks(){
+ const q=String($('workSearch').value||'').toLowerCase().trim();
+ const list=works.filter(w=>
+  String(w.title||'').toLowerCase().includes(q)||
+  String(w.content||'').toLowerCase().includes(q)||
+  String(w.type||'').toLowerCase().includes(q)
+ );
+ $('workList').innerHTML=list.length?list.map(w=>`
+ <div class="entry">
+ <strong>${esc(w.title||'未命名作品')}</strong>
+ <small>${esc(w.type||'未分类')} · ${esc(w.date||'')}</small>
+ <div class="actions">
+ <button class="secondary" onclick="editWork('${esc(w.id)}')">打开</button>
+ <button class="secondary" onclick="exportOne('${esc(w.id)}')">导出</button>
+ <button class="danger" onclick="deleteWork('${esc(w.id)}')">删除</button>
+ </div></div>`).join(''):'<p class="hint">没有找到作品，试试其他关键词。</p>';
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function editWork(id){
+ const w=works.find(x=>x.id===id);if(!w)return;
+ window.editingWorkId=w.id;
+ $('editorHeading').textContent='编辑作品';
+ $('workTitle').value=w.title;
+ $('workContent').value=w.content;
+ $('workType').value=w.type;
+ showPage('editor');
+}
+function deleteWork(id){
+ if(!confirm('确定删除这份作品？'))return;
+ works=works.filter(w=>w.id!==id);putData('xx_works',works);renderWorks();refresh();
+}
+function exportOne(id){
+ const w=works.find(x=>x.id===id);if(w)downloadText(w.title,w.title+'\n'+w.type+'\n\n'+w.content);
+}
+function savePlan(){
+ const title=$('planTitle').value.trim(),date=$('planDate').value;
+ if(!title||!date){alert('请填写作品名称和日期');return}
+ plans.unshift({id:String(Date.now()),title,date,platform:$('planPlatform').value,note:$('planNote').value});
+ putData('xx_plans',plans);$('planTitle').value='';$('planNote').value='';
+ renderPlans();refresh();alert('发布计划已保存');
+}
+function renderPlans(){
+ $('planList').innerHTML=plans.length?plans.map(p=>`
+ <div class="entry"><strong>${esc(p.title)}</strong>
+ <small>${esc(p.date)} · ${esc(p.platform)}</small>
+ <p class="hint">${esc(p.note||'')}</p>
+ <button class="danger" onclick="deletePlan('${p.id}')">删除计划</button></div>`).join(''):'<p class="hint">暂无发布计划</p>';
+}
+function deletePlan(id){plans=plans.filter(p=>p.id!==id);putData('xx_plans',plans);renderPlans();refresh()}
+function renderStats(){
+ $('statWorks').textContent=works.length;
+ $('statArticles').textContent=works.filter(w=>
+  String(w.type||'').includes('文章')||String(w.type||'')==='人物志'
+ ).length;
+ $('statVideos').textContent=works.filter(w=>
+  String(w.type||'').includes('视频')||String(w.type||'').includes('脚本')
+ ).length;
+ $('statMusic').textContent=works.filter(w=>
+  String(w.type||'').includes('歌词')||String(w.type||'').includes('音乐')
+ ).length;
+}
+function refresh(){
+ $('totalWorks').textContent=works.length;
+ $('totalPlans').textContent=plans.length;
+ renderStats();
+}
+function saveBrand(){
+ putData('xx_brand',{name:$('brandName').value,slogan:$('brandSlogan').value,direction:$('brandDirection').value});
+ alert('品牌资料保存成功');
+}
+function makePoster(){
+ const title=$('posterTitle').value||'湘湘视野';
+ const sub=$('posterSub').value||'行走，发现热爱生活';
+ const ratio=Number($('posterRatio').value);
+ const width=1200,height=Math.round(width/ratio);
+ const canvas=document.createElement('canvas');
+ canvas.width=width;
+ canvas.height=height;
+ const c=canvas.getContext('2d');
+ c.fillStyle=$('posterColor').value;
+ c.fillRect(0,0,width,height);
+ c.strokeStyle='#d9b77d';
+ c.lineWidth=5;
+ c.strokeRect(35,35,width-70,height-70);
+ c.textAlign='center';
+ c.fillStyle='#e9cc96';
+ const size=Math.min(75,width/(title.length||1)*1.4);
+ c.font='bold '+size+'px sans-serif';
+ c.fillText(title,width/2,height*0.48,width-120);
+ c.fillStyle='#ffffff';
+ c.font='34px sans-serif';
+ c.fillText(sub,width/2,height*0.61,width-100);
+ c.fillStyle='#d9b77d';
+ c.font='26px sans-serif';
+ c.fillText('湘 湘 视 野',width/2,height*0.78);
+ canvas.toBlob(blob=>{
+  if(!blob){alert('图片生成失败');return}
+  if(window.AndroidApp && typeof AndroidApp.saveFile==='function'){
+   const reader=new FileReader();
+   reader.onload=()=>{
+    try{
+     const dataUrl=String(reader.result);
+     const base64=dataUrl.substring(dataUrl.indexOf(',')+1);
+     AndroidApp.saveFile('湘湘视野封面.png','image/png',base64);
+    }catch(e){
+     alert('封面保存失败：'+e.message);
+    }
+   };
+   reader.onerror=()=>alert('封面读取失败');
+   reader.readAsDataURL(blob);
+  }else{
+   const url=URL.createObjectURL(blob);
+   $('posterDownload').innerHTML='';
+   const a=document.createElement('a');
+   a.href=url;
+   a.download='湘湘视野封面.png';
+   a.className='download';
+   a.textContent='⬇ 保存生成的封面图片';
+   $('posterDownload').appendChild(a);
+  }
+ },'image/png');
+}
+function exportBackup(){
+ const data={
+  version:1,
+  exportTime:new Date().toISOString(),
+  works,plans,
+  brand:getData('xx_brand',{})
+ };
+ saveTextFile(
+  '湘湘视野数据备份.json',
+  JSON.stringify(data,null,2),
+  'application/json;charset=utf-8'
+ );
+}
+function importBackup(event){
+ const file=event.target.files[0];
+ if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const d=JSON.parse(reader.result);
+   if(!d||!Array.isArray(d.works)||!Array.isArray(d.plans)){
+    throw Error('备份格式不正确');
+   }
+   works=d.works;
+   plans=d.plans;
+   putData('xx_works',works);
+   putData('xx_plans',plans);
+   putData('xx_brand',d.brand||{});
+   const b=d.brand||{};
+   $('brandName').value=b.name||'湘湘视野';
+   $('brandSlogan').value=b.slogan||'行走，发现热爱生活。';
+   $('brandDirection').value=b.direction||'衡阳城市风光、手机街拍、人文历史、人物故事、社会观察。';
+   refresh();
+   renderWorks();
+   renderPlans();
+   alert('备份恢复成功，共恢复 '+works.length+' 份作品和 '+plans.length+' 条计划');
+  }catch(e){
+   alert('恢复失败：'+e.message);
+  }
+ };
+ reader.onerror=()=>alert('文件读取失败');
+ reader.readAsText(file);
+ event.target.value='';
+}
+function clearData(){
+ if(!confirm('确定清空全部作品、计划和品牌资料？此操作不可恢复！'))return;
+ localStorage.removeItem('xx_works');localStorage.removeItem('xx_plans');localStorage.removeItem('xx_brand');
+ works=[];plans=[];refresh();alert('本地数据已清空');
+}
+$('posterTitle').addEventListener('input',()=>$('posterPreviewTitle').textContent=$('posterTitle').value);
+$('posterSub').addEventListener('input',()=>$('posterPreviewSub').textContent=$('posterSub').value);
+$('posterColor').addEventListener('input',()=>$('posterPreview').style.background=$('posterColor').value);
+$('posterRatio').addEventListener('change',()=>{
+ const r=Number($('posterRatio').value);
+ $('posterPreview').style.aspectRatio='1 / '+(1/r);
+});
+(function init(){
+ const b=getData('xx_brand',{});
+ if(b.name)$('brandName').value=b.name;
+ if(b.slogan)$('brandSlogan').value=b.slogan;
+ if(b.direction)$('brandDirection').value=b.direction;
+ $('planDate').value=new Date().toISOString().slice(0,10);
+ refresh();
+})();
+</script>
+</body>
+</html>

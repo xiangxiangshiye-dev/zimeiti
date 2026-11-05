@@ -135,6 +135,19 @@ background:#f0f1f5;padding:12px;border-radius:10px;color:#29364c;margin-top:10px
   </select>
   <label>创作内容</label>
   <textarea id="workContent" placeholder="在这里写下你的灵感、文章、脚本或歌词……"></textarea>
+
+  <div class="panel" style="margin-top:14px">
+   <h3>📷 创作素材</h3>
+   <p class="hint">可以从手机选择照片和视频，支持多选。</p>
+   <input id="mediaFiles" type="file" accept="image/*,video/*" multiple class="hidden" onchange="handleMediaSelection(event)">
+   <div class="actions">
+    <button class="secondary" onclick="document.getElementById('mediaFiles').click()">选择照片或视频</button>
+    <button class="secondary" onclick="clearMediaSelection()">清除素材</button>
+   </div>
+   <p id="mediaStatus" class="hint">尚未选择素材</p>
+   <div id="mediaPreview" style="display:flex;flex-wrap:wrap;gap:10px"></div>
+  </div>
+
   <div class="actions">
    <button class="primary" onclick="saveWork()">保存作品</button>
    <button class="secondary" onclick="copyWork()">复制内容</button>
@@ -256,6 +269,70 @@ const types={
  music:['音乐创作','歌曲歌词','明确主题、情绪、段落结构和适合的演唱风格。'],
  hotspot:['热点选题','热点策划','先核实事实，再分析背景，避免未经证实的信息。']
 };
+
+let mediaObjectUrls = [];
+
+function clearMediaSelection(){
+ mediaObjectUrls.forEach(url=>URL.revokeObjectURL(url));
+ mediaObjectUrls=[];
+ $('mediaPreview').innerHTML='';
+ $('mediaStatus').textContent='尚未选择素材';
+ $('mediaFiles').value='';
+}
+
+function handleMediaSelection(event){
+ const files=Array.from(event.target.files||[]);
+ clearMediaSelection();
+ if(!files.length)return;
+
+ const preview=$('mediaPreview');
+ let count=0;
+
+ files.forEach(file=>{
+  if(!file.type.startsWith('image/') &&
+     !file.type.startsWith('video/'))return;
+
+  const url=URL.createObjectURL(file);
+  mediaObjectUrls.push(url);
+
+  const card=document.createElement('div');
+  card.style.cssText='width:145px;padding:8px;border:1px solid #526078;border-radius:10px;overflow:hidden';
+
+  if(file.type.startsWith('image/')){
+   const img=document.createElement('img');
+   img.src=url;
+   img.alt=file.name;
+   img.style.cssText='width:100%;height:110px;object-fit:cover;border-radius:6px';
+   card.appendChild(img);
+  }else{
+   const video=document.createElement('video');
+   video.src=url;
+   video.controls=true;
+   video.preload='metadata';
+   video.style.cssText='width:100%;height:110px;object-fit:contain;border-radius:6px';
+   card.appendChild(video);
+  }
+
+  const name=document.createElement('p');
+  name.textContent=file.name;
+  name.style.cssText='font-size:12px;overflow-wrap:anywhere;margin:6px 0';
+  card.appendChild(name);
+
+  const size=document.createElement('small');
+  size.textContent=(file.size/1024/1024).toFixed(2)+' MB';
+  card.appendChild(size);
+
+  preview.appendChild(card);
+  count++;
+ });
+
+ $('mediaStatus').textContent='已选择 '+count+' 个素材（仅当前页面预览）';
+
+ if(count===0){
+  $('mediaStatus').textContent='没有找到可预览的照片或视频';
+ }
+}
+
 function showPage(id){
  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
  $(id).classList.add('active');
